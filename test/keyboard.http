@@ -1,0 +1,3 @@
+POST https://api.vk.com/method/messages.send?group_id=187421915&access_token=dc2665238b736d270d6314240e62affceca6e8560c16d8f661cba5c58d83e030ff54a20236240141bf3e0&user_id=493384597&message=Песос&v=5.102&random_id=323456879990&keyboard={ "one_time": false, "buttons": [ [ { "action": { "type": "text", "label": "1", "payload": "{\"button\": \"1\"}" }, "color": "primary" }, { "action": { "type": "text", "label": "2", "payload": "{\"button\": \"2\"}" }, "color": "primary" }, { "action": { "type": "text", "label": "3", "payload": "{\"button\": \"3\"}" }, "color": "primary" } ] ] }
+
+###
