@@ -1,0 +1,31 @@
+{
+  "one_time": false,
+  "buttons": [
+    [
+      {
+        "action": {
+          "type": "text",
+          "label": "1",
+          "payload": "{\"button\": \"1\"}"
+        },
+        "color": "primary"
+      },
+      {
+        "action": {
+          "type": "text",
+          "label": "2",
+          "payload": "{\"button\": \"2\"}"
+        },
+        "color": "primary"
+      },
+      {
+        "action": {
+          "type": "text",
+          "label": "3",
+          "payload": "{\"button\": \"3\"}"
+        },
+        "color": "primary"
+      }
+    ]
+  ]
+}

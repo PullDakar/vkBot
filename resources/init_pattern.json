@@ -1,0 +1,23 @@
+{
+  "one_time": false,
+  "buttons": [
+    [
+      {
+        "action": {
+          "type": "text",
+          "label": "Предложить идею",
+          "payload": "{\"button\": \"1\"}"
+        },
+        "color": "positive"
+      },
+      {
+        "action": {
+          "type": "text",
+          "label": "Добавить участника",
+          "payload": "{\"button\": \"2\"}"
+        },
+        "color": "primary"
+      }
+    ]
+  ]
+}

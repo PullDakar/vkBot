@@ -2,6 +2,7 @@ package domain
 
 import (
 	"encoding/json"
+	"log"
 )
 
 // plain old для сообщения
@@ -13,6 +14,8 @@ type Message struct {
 }
 
 func (m *Message) UnmarshalJSON(b []byte) error {
+	log.Println("Input json: ", string(b))
+
 	var plainJsonStruct interface{}
 	unmarshalErr := json.Unmarshal(b, &plainJsonStruct)
 	if unmarshalErr != nil {

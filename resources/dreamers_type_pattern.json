@@ -1,0 +1,85 @@
+{
+  "one_time": false,
+  "buttons": [
+    [
+      {
+        "action": {
+          "type": "text",
+          "label": "Системный аналитик",
+          "payload": "{\"button\": \"1\"}"
+        },
+        "color": "secondary"
+      },
+      {
+        "action": {
+          "type": "text",
+          "label": "Бизнес-аналитик",
+          "payload": "{\"button\": \"2\"}"
+        },
+        "color": "secondary"
+      }
+    ],
+    [
+      {
+        "action": {
+          "type": "text",
+          "label": "Java разработчик",
+          "payload": "{\"button\": \"3\"}"
+        },
+        "color": "secondary"
+      },
+      {
+        "action": {
+          "type": "text",
+          "label": "Golang разработчик",
+          "payload": "{\"button\": \"5\"}"
+        },
+        "color": "secondary"
+      },
+      {
+        "action": {
+          "type": "text",
+          "label": "Python разработчик",
+          "payload": "{\"button\": \"6\"}"
+        },
+        "color": "secondary"
+      }
+    ],
+    [
+      {
+        "action": {
+          "type": "text",
+          "label": "React разработчик",
+          "payload": "{\"button\": \"7\"}"
+        },
+        "color": "secondary"
+      },
+      {
+        "action": {
+          "type": "text",
+          "label": "Angular разработчик",
+          "payload": "{\"button\": \"8\"}"
+        },
+        "color": "secondary"
+      }
+    ],
+    [
+      {
+        "action": {
+          "type": "text",
+          "label": "Android разработчик",
+          "payload": "{\"button\": \"9\"}"
+        },
+        "color": "secondary"
+      },
+      {
+        "action": {
+          "type": "text",
+          "label": "IOS разработчик",
+          "payload": "{\"button\": \"10\"}"
+        },
+        "color": "secondary"
+      }
+    ]
+  ]
+}
