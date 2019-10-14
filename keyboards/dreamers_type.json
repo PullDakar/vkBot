@@ -1,0 +1,51 @@
+{
+  "one_time": false,
+  "buttons": [
+    [
+      {
+        "action": {
+          "type": "text",
+          "label": "Аналитик",
+          "payload": "{\"button\": \"1\"}"
+        },
+        "color": "primary"
+      },
+      {
+        "action": {
+          "type": "text",
+          "label": "Разработчик",
+          "payload": "{\"button\": \"2\"}"
+        },
+        "color": "primary"
+      }
+    ],
+    [
+      {
+        "action": {
+          "type": "text",
+          "label": "Тестировщик",
+          "payload": "{\"button\": \"3\"}"
+        },
+        "color": "primary"
+      },
+      {
+        "action": {
+          "type": "text",
+          "label": "Менеджер проектов",
+          "payload": "{\"button\": \"4\"}"
+        },
+        "color": "primary"
+      }
+    ],
+    [
+      {
+        "action": {
+          "type": "text",
+          "label": "Сформировать команду",
+          "payload": "{\"button\": \"5\"}"
+        },
+        "color": "positive"
+      }
+    ]
+  ]
+}

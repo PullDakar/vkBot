@@ -1,0 +1,31 @@
+{
+  "one_time": false,
+  "buttons": [
+    [
+      {
+        "action": {
+          "type": "text",
+          "label": "Java",
+          "payload": "{\"button\": \"1\"}"
+        },
+        "color": "primary"
+      },
+      {
+        "action": {
+          "type": "text",
+          "label": "Python",
+          "payload": "{\"button\": \"2\"}"
+        },
+        "color": "primary"
+      },
+      {
+        "action": {
+          "type": "text",
+          "label": "Golang",
+          "payload": "{\"button\": \"3\"}"
+        },
+        "color": "primary"
+      }
+    ]
+  ]
+}

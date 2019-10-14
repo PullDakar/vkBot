@@ -18,7 +18,6 @@ func messageRouterHandler(w http.ResponseWriter, r *http.Request) {
 	if unmarshalErr != nil {
 		log.Panic("Error while unmarshal response: ", unmarshalErr)
 	}
-
 }
 
 func main() {

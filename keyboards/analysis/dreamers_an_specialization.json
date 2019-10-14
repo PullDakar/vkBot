@@ -1,0 +1,23 @@
+{
+  "one_time": false,
+  "buttons": [
+    [
+      {
+        "action": {
+          "type": "text",
+          "label": "Системный",
+          "payload": "{\"button\": \"1\"}"
+        },
+        "color": "primary"
+      },
+      {
+        "action": {
+          "type": "text",
+          "label": "Бизнес",
+          "payload": "{\"button\": \"2\"}"
+        },
+        "color": "primary"
+      }
+    ]
+  ]
+}

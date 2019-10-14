@@ -1,0 +1,31 @@
+{
+  "one_time": false,
+  "buttons": [
+    [
+      {
+        "action": {
+          "type": "text",
+          "label": "Бэк",
+          "payload": "{\"button\": \"1\"}"
+        },
+        "color": "primary"
+      },
+      {
+        "action": {
+          "type": "text",
+          "label": "Фронт",
+          "payload": "{\"button\": \"2\"}"
+        },
+        "color": "primary"
+      },
+      {
+        "action": {
+          "type": "text",
+          "label": "Мобильный",
+          "payload": "{\"button\": \"3\"}"
+        },
+        "color": "primary"
+      }
+    ]
+  ]
+}
