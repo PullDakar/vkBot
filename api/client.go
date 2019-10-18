@@ -1,13 +1,35 @@
 package api
 
-import "vkBot/api/actions"
+const apiAddress string = "https://api.vk.com/method/"
 
-type VkApiClient struct {
-	transportClient TransportClient
+type IVkQuery interface {
+	Execute() string
 }
 
-const apiAddress = "https://api.vk.com/method/"
+type IVkQueryBuilder interface {
+	Messages() Messages
+}
 
-func (vk VkApiClient) messages() actions.Messages {
-	return actions.Messages{}
+type VkQueryBuilder struct {
+	Method string
+	Params map[string]string
+}
+
+func NewVkRequest() IVkQueryBuilder {
+	return &VkQueryBuilder{}
+}
+
+func (vkQueryBuilder *VkQueryBuilder) Messages() Messages {
+	return &MessagesBuilder{Vk: vkQueryBuilder}
+}
+
+func (vkQueryBuilder VkQueryBuilder) FormRequest() string {
+	res := apiAddress
+	res += vkQueryBuilder.Method + "?"
+
+	for k, v := range vkQueryBuilder.Params {
+		res += k + "=" + v + "&"
+	}
+
+	return res[:len(res)-1]
 }

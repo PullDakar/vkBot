@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"vkBot/conversation"
 	"vkBot/domain"
 )
 
@@ -18,6 +19,9 @@ func messageRouterHandler(w http.ResponseWriter, r *http.Request) {
 	if unmarshalErr != nil {
 		log.Panic("Error while unmarshal response: ", unmarshalErr)
 	}
+
+	service := conversation.MessageService{Message: *msg}
+	service.Process()
 }
 
 func main() {

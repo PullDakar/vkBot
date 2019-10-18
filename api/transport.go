@@ -13,9 +13,7 @@ type TransportClient interface {
 }
 
 type HttpTransportClient struct {
-	HttpClient                      http.Client
-	RetryAttemptsNetworkErrorCount  int
-	RetryAttemptsInvalidStatusCount int
+	HttpClient http.Client
 }
 
 const contentTypeHeader string = "Content-Type"
