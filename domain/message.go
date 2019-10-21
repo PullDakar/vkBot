@@ -3,13 +3,14 @@ package domain
 import (
 	"encoding/json"
 	"log"
+	"strconv"
 )
 
 // plain old для сообщения
 type Message struct {
-	Id       int64
+	Id       string
 	Type     MessageType
-	AuthorId int64
+	AuthorId string
 	Text     string
 }
 
@@ -28,11 +29,11 @@ func (m *Message) UnmarshalJSON(b []byte) error {
 	m.Type = GetMessageTypeByStrCode(messageStruct["type"].(string))
 
 	if id, exist := msgObject["id"]; exist {
-		m.Id = int64(id.(float64))
+		m.Id = strconv.FormatFloat(id.(float64), 'f', -1, 64)
 	}
 
 	if authorId, exist := msgObject["from_id"]; exist {
-		m.AuthorId = int64(authorId.(float64))
+		m.AuthorId = strconv.FormatFloat(authorId.(float64), 'f', -1, 64)
 	}
 
 	if text, exist := msgObject["text"]; exist {

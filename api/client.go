@@ -1,5 +1,10 @@
 package api
 
+import (
+	"log"
+	"net/url"
+)
+
 const apiAddress string = "https://api.vk.com/method/"
 
 type IVkQuery interface {
@@ -31,5 +36,10 @@ func (vkQueryBuilder VkQueryBuilder) FormRequest() string {
 		res += k + "=" + v + "&"
 	}
 
-	return res[:len(res)-1]
+	uri, err := url.Parse(res[:len(res)-1])
+	if err != nil {
+		log.Panic("Error while parsing url: ", err)
+	}
+
+	return uri.String()
 }
