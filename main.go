@@ -21,17 +21,20 @@ type DialogState int
 const (
 	DialogBegins DialogState = iota // отправил кнопку "Начать"
 
-	IdeaSuggest        // отправил кнопку "Предложить идею"
-	IdeaDescribed      // описал суть идеи
-	ChooseDreamerType  // выбрал тип участника
-	ChooseAnalystType  // выбрал аналитика
-	ChooseDreamerCount // выбрал количество участников
-	FormedTeam         // сформировал команду
+	IdeaDescribed // описал суть идеи
 
-	AddDreamer     // отправил кнопку "Добавить участника"
-	AddDreamerName // добавил имя участника
-	AddDreamerMail // добавил почту участника
-	AddDreamerRole // добавил роль участника
+	ChooseDreamerType // выбрал тип участника
+
+	ChooseAnalystType // выбрал аналитика
+
+	ChooseDevType       //  выбрал разработчика
+	ChooseBackDevType   //  выбрал back-end разработчика
+	ChooseFrontDevType  // выбрал front-end разработчика
+	ChooseMobileDevType // выбрал мобильного разработчика
+
+	ChooseTesterType // выбрал тестировщика
+
+	ChooseDreamerCount // выбрал количество участников
 )
 
 type Sender struct {
@@ -42,6 +45,10 @@ type Sender struct {
 func getDialogState(authorId string) int {
 	state, _ := redisClient.Get(authorId).Int()
 	return state
+}
+
+func setDialogState(authorId string, state DialogState) {
+	redisClient.Set(authorId, state, 0)
 }
 
 func messageRouterHandler(w http.ResponseWriter, r *http.Request) {
@@ -73,20 +80,97 @@ func messageRouterHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if state == int(ChooseDreamerType) && msg.Text == "Аналитик" {
-			api.NewVkRequest().Messages().Send(group).UserId(msg.AuthorId).Message("Какой именно аналитик Вам нужен?").Keyboard(
+			api.NewVkRequest().Messages().Send(group).UserId(msg.AuthorId).Message("Выберите специализацию аналитика:").Keyboard(
 				"./keyboards/analysis/dreamers_an_specialization.json").Execute()
 			redisClient.Set(msg.AuthorId, int(ChooseAnalystType), 0)
 		}
 
 		if state == int(ChooseAnalystType) {
-			api.NewVkRequest().Messages().Send(group).UserId(msg.AuthorId).Message("Выберите количество аналитиков для успешной реализации проекта").Keyboard(
+			api.NewVkRequest().Messages().Send(group).UserId(msg.AuthorId).Message(
+				"Выберите количество аналитиков для успешной реализации идеи:").Keyboard(
 				"./keyboards/dreamers_count.json").Execute()
 			redisClient.Set(msg.AuthorId, int(ChooseDreamerCount), 0)
 		}
 
 		if state == int(ChooseDreamerCount) {
-			api.NewVkRequest().Messages().Send(group).UserId(msg.AuthorId).Message("Спасибо! Мы запомнили Ваш выбор!").Keyboard(
+			api.NewVkRequest().Messages().Send(group).UserId(msg.AuthorId).Message("Требуется ли Вам еще специалисты?").Keyboard(
 				"./keyboards/dreamers_type.json").Execute()
+			redisClient.Set(msg.AuthorId, int(ChooseDreamerType), 0)
+		}
+
+		if state == int(ChooseDreamerType) && msg.Text == "Разработчик" {
+			api.NewVkRequest().Messages().Send(group).UserId(msg.AuthorId).Message(
+				"Выберите специализацию разработчика:").Keyboard(
+				"./keyboards/dev/dreamers_subtype_dev.json").Execute()
+			redisClient.Set(msg.AuthorId, int(ChooseDevType), 0)
+		}
+
+		if state == int(ChooseDreamerType) && msg.Text == "Тестировщик" {
+			api.NewVkRequest().Messages().Send(group).UserId(msg.AuthorId).Message(
+				"Выберите специализацию тестировщика:").Keyboard(
+				"./keyboards/tester/dreamers_test_specialization.json").Execute()
+			redisClient.Set(msg.AuthorId, int(ChooseTesterType), 0)
+		}
+
+		if state == int(ChooseTesterType) {
+			api.NewVkRequest().Messages().Send(group).UserId(msg.AuthorId).Message(
+				"Выберите количество " + msg.Text + " тестировщиков для успешной реализации идеи:").Keyboard(
+				"./keyboards/dreamers_count.json").Execute()
+			redisClient.Set(msg.AuthorId, int(ChooseDreamerCount), 0)
+		}
+
+		if state == int(ChooseDreamerType) && msg.Text == "Менеджер проектов" {
+			api.NewVkRequest().Messages().Send(group).UserId(msg.AuthorId).Message(
+				"Выберите количество менеджеров для успешной реализации идеи:").Keyboard(
+				"./keyboards/dreamers_count.json").Execute()
+			redisClient.Set(msg.AuthorId, int(ChooseDreamerCount), 0)
+		}
+
+		if state == int(ChooseDevType) && msg.Text == "Бэк" {
+			api.NewVkRequest().Messages().Send(group).UserId(msg.AuthorId).Message(
+				"Выберите специализацию back-end разработчика:").Keyboard(
+				"./keyboards/dev/dreamers_back_specialization.json").Execute()
+			redisClient.Set(msg.AuthorId, int(ChooseBackDevType), 0)
+		}
+
+		if state == int(ChooseDevType) && msg.Text == "Фронт" {
+			api.NewVkRequest().Messages().Send(group).UserId(msg.AuthorId).Message(
+				"Выберите специализацию front-end разработчика:").Keyboard(
+				"./keyboards/dev/dreamers_front_specialization.json").Execute()
+			redisClient.Set(msg.AuthorId, int(ChooseFrontDevType), 0)
+		}
+
+		if state == int(ChooseDevType) && msg.Text == "Мобильный" {
+			api.NewVkRequest().Messages().Send(group).UserId(msg.AuthorId).Message(
+				"Выберите специализацию мобильного разработчика:").Keyboard(
+				"./keyboards/dev/dreamers_mobile_specialization.json").Execute()
+			redisClient.Set(msg.AuthorId, int(ChooseMobileDevType), 0)
+		}
+
+		if state == int(ChooseBackDevType) {
+			api.NewVkRequest().Messages().Send(group).UserId(msg.AuthorId).Message(
+				"Выберите количество " + msg.Text + " разработчиков для успешной реализации идеи:").Keyboard(
+				"./keyboards/dreamers_count.json").Execute()
+			redisClient.Set(msg.AuthorId, int(ChooseDreamerCount), 0)
+		}
+
+		if state == int(ChooseFrontDevType) {
+			api.NewVkRequest().Messages().Send(group).UserId(msg.AuthorId).Message(
+				"Выберите количество " + msg.Text + " разработчиков для успешной реализации идеи:").Keyboard(
+				"./keyboards/dreamers_count.json").Execute()
+			redisClient.Set(msg.AuthorId, int(ChooseDreamerCount), 0)
+		}
+
+		if state == int(ChooseMobileDevType) {
+			api.NewVkRequest().Messages().Send(group).UserId(msg.AuthorId).Message(
+				"Выберите количество " + msg.Text + " разработчиков для успешной реализации идеи:").Keyboard(
+				"./keyboards/dreamers_count.json").Execute()
+			redisClient.Set(msg.AuthorId, int(ChooseDreamerCount), 0)
+		}
+
+		if state == int(ChooseDreamerType) && msg.Text == "Сформировать команду" {
+			api.NewVkRequest().Messages().Send(group).UserId(msg.AuthorId).Message("Спасибо! Ожидайте, когда команда соберется! Удачи!").Keyboard(
+				"./keyboards/init.json").Execute()
 			redisClient.Set(msg.AuthorId, int(ChooseDreamerType), 0)
 		}
 	}
@@ -105,7 +189,7 @@ func getFileContent(path string) string {
 
 func main() {
 	redisClient = redis.NewClient(&redis.Options{
-		Addr: "localhost:6379",
+		Addr: "localhost:6380",
 	})
 
 	_, pingErr := redisClient.Ping().Result()
