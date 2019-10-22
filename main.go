@@ -44,10 +44,6 @@ func getDialogState(authorId string) int {
 	return state
 }
 
-func setDialogState(authorId string, state DialogState) {
-	redisClient.Set(authorId, state, 0)
-}
-
 func messageRouterHandler(w http.ResponseWriter, r *http.Request) {
 	b, readErr := ioutil.ReadAll(r.Body)
 	if readErr != nil {
@@ -77,19 +73,19 @@ func messageRouterHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if state == int(ChooseDreamerType) && msg.Text == "Аналитик" {
-			api.NewVkRequest().Messages().Send(group).UserId(msg.AuthorId).Keyboard(
+			api.NewVkRequest().Messages().Send(group).UserId(msg.AuthorId).Message("Какой именно аналитик Вам нужен?").Keyboard(
 				"./keyboards/analysis/dreamers_an_specialization.json").Execute()
 			redisClient.Set(msg.AuthorId, int(ChooseAnalystType), 0)
 		}
 
 		if state == int(ChooseAnalystType) {
-			api.NewVkRequest().Messages().Send(group).UserId(msg.AuthorId).Keyboard(
+			api.NewVkRequest().Messages().Send(group).UserId(msg.AuthorId).Message("Выберите количество аналитиков для успешной реализации проекта").Keyboard(
 				"./keyboards/dreamers_count.json").Execute()
 			redisClient.Set(msg.AuthorId, int(ChooseDreamerCount), 0)
 		}
 
 		if state == int(ChooseDreamerCount) {
-			api.NewVkRequest().Messages().Send(group).UserId(msg.AuthorId).Keyboard(
+			api.NewVkRequest().Messages().Send(group).UserId(msg.AuthorId).Message("Спасибо! Мы запомнили Ваш выбор!").Keyboard(
 				"./keyboards/dreamers_type.json").Execute()
 			redisClient.Set(msg.AuthorId, int(ChooseDreamerType), 0)
 		}
