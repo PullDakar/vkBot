@@ -4,8 +4,8 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"vkBot/conversation"
-	"vkBot/conversation/domain"
+	"vkBot/cache"
+	"vkBot/cache/domain"
 )
 
 func messageRouterHandler(w http.ResponseWriter, r *http.Request) {
@@ -21,8 +21,8 @@ func messageRouterHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if msg.Type == domain.MessageNew {
-		state := conversation.GetDialogState(msg.AuthorId)
-		ctx := conversation.DialogContext{
+		state := cache.GetDialogState(msg.AuthorId)
+		ctx := cache.DialogContext{
 			InputMessage: msg,
 			CurrentState: state,
 		}

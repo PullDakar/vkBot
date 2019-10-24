@@ -1,13 +1,13 @@
 package api
 
 import (
-	"io/ioutil"
+	"encoding/binary"
+	"github.com/spaolacci/murmur3"
 	"log"
-	"math"
-	"math/rand"
 	"net/http"
 	"net/url"
 	"strconv"
+	"time"
 	"vkBot/keyboards"
 )
 
@@ -23,9 +23,27 @@ type MessageSendQueryBuilder struct {
 
 func (queryBuilder *MessageSendQueryBuilder) UserId(userId string) *MessageSendQueryBuilder {
 	queryBuilder.Vk.Params["user_id"] = userId
-	queryBuilder.Vk.Params["random_id"] = strconv.FormatInt(rand.Int63n(math.MaxInt64), 10)
+	queryBuilder.Vk.Params["random_id"] = strconv.FormatUint(randomId(userId), 10)
 
 	return queryBuilder
+}
+
+func randomId(userId string) uint64 {
+	h := murmur3.New64()
+	b := make([]byte, 8)
+	binary.LittleEndian.PutUint64(b, uint64(time.Now().UnixNano()))
+
+	_, timeErr := h.Write(b)
+	if timeErr != nil {
+		log.Panic(timeErr)
+	}
+
+	_, idErr := h.Write([]byte(userId))
+	if idErr != nil {
+		log.Panic(idErr)
+	}
+
+	return h.Sum64()
 }
 
 func (queryBuilder *MessageSendQueryBuilder) Keyboard(pathToJson string) *MessageSendQueryBuilder {
@@ -47,11 +65,6 @@ func (queryBuilder MessageSendQueryBuilder) Execute() *http.Response {
 		log.Panic("Error while sending post request: ", resp)
 	}
 
-	b, bodyErr := ioutil.ReadAll(resp.Body)
-	if bodyErr != nil {
-		log.Panic("Error while reading response: ", bodyErr)
-	}
-
-	log.Println("Response: ", string(b))
+	log.Println("Response: ", resp)
 	return resp
 }
