@@ -1,85 +1,34 @@
 package cache
 
 import (
-	"github.com/go-redis/redis"
 	"log"
 	"vkBot/api"
 	"vkBot/api/actors"
 	"vkBot/cache/domain"
 )
 
-// TODO переделать чтение полей из yml
+// FIXME переделать чтение полей из yml
 var group = actors.GroupActor{
 	GroupId:     187421915,
 	AccessToken: "dc2665238b736d270d6314240e62affceca6e8560c16d8f661cba5c58d83e030ff54a20236240141bf3e0",
 }
 
-// TODO переделать чление полей из yml
-var redisClient = redis.NewClient(&redis.Options{
-	Addr: "localhost:6380",
-})
-
-var possibleStates = [...]DialogState{
-	DialogNotStartedState{},
-	DialogStartedState{},
-	IdeaBranchStartedState{},
-	IdeaDescribedState{},
-	AnalystTypeChosenState{},
-	SpecialistCountSelectedState{},
-	TeamFormedState{},
-	DeveloperTypeChosenState{},
-	TesterTypeChosenState{},
-	BackDeveloperChosenState{},
-	FrontDeveloperChosenState{},
-	MobileDeveloperChosenState{},
-	AddingDreamerStartedState{},
-	AddedDreamerLinkState{},
-	NewDreamerSpecializationSelectedState{},
-}
-
-func GetDialogState(authorId string) DialogState {
-	stateIndex, _ := redisClient.Get(authorId).Int()
-	return possibleStates[stateIndex]
-}
-
-func setDialogState(key string, value DialogState) {
-	index, notFoundErr := indexOf(value)
-	if notFoundErr != nil {
-		log.Panic(notFoundErr)
-	}
-
-	_, err := redisClient.Set(key, index, 0).Result()
-	if err != nil {
-		log.Panic("Error while setting value to redis cache by key "+key+" with ", err)
-	}
-}
-
-func indexOf(value DialogState) (int, error) {
-	for index, state := range possibleStates {
-		if state == value {
-			return index, nil
-		}
-	}
-
-	// TODO добавить передачу в ошибку конкретный state
-	return -1, &stateNotFound{"Dialog state not found "}
-}
-
-type stateNotFound struct {
-	error string
-}
-
-func (err *stateNotFound) Error() string {
-	return err.error
-}
-
 type DialogState interface {
-	Reply(ctx *DialogContext)
+	reply(ctx *DialogContext)
+}
+
+type DialogContext struct {
+	InputMessage *domain.Message
+	CurrentState DialogState
+}
+
+func (ctx *DialogContext) Reply() {
+	ctx.CurrentState.reply(ctx)
 }
 
 type DialogNotStartedState struct{}
 
-func (state DialogNotStartedState) Reply(ctx *DialogContext) {
+func (state DialogNotStartedState) reply(ctx *DialogContext) {
 	if ctx.InputMessage.Text == "Начать" {
 		api.NewVkRequest().Messages().Send(group).UserId(ctx.InputMessage.AuthorId).Message(
 			"Привет! Данный бот поможет тебе найти нужных специалистов для реализации твоей бизнес идеи! " +
@@ -92,7 +41,7 @@ func (state DialogNotStartedState) Reply(ctx *DialogContext) {
 
 type DialogStartedState struct{}
 
-func (state DialogStartedState) Reply(ctx *DialogContext) {
+func (state DialogStartedState) reply(ctx *DialogContext) {
 	switch ctx.InputMessage.Text {
 	case "Предложить идею":
 		api.NewVkRequest().Messages().Send(group).UserId(ctx.InputMessage.AuthorId).Message(
@@ -107,7 +56,7 @@ func (state DialogStartedState) Reply(ctx *DialogContext) {
 
 type IdeaBranchStartedState struct{}
 
-func (state IdeaBranchStartedState) Reply(ctx *DialogContext) {
+func (state IdeaBranchStartedState) reply(ctx *DialogContext) {
 	idea := ctx.InputMessage.Text
 	log.Println("Suggested idea: " + idea)
 
@@ -119,7 +68,7 @@ func (state IdeaBranchStartedState) Reply(ctx *DialogContext) {
 
 type IdeaDescribedState struct{}
 
-func (state IdeaDescribedState) Reply(ctx *DialogContext) {
+func (state IdeaDescribedState) reply(ctx *DialogContext) {
 	switch ctx.InputMessage.Text {
 	case "Аналитик":
 		api.NewVkRequest().Messages().Send(group).UserId(ctx.InputMessage.AuthorId).Message(
@@ -150,7 +99,7 @@ func (state IdeaDescribedState) Reply(ctx *DialogContext) {
 
 type AnalystTypeChosenState struct{}
 
-func (state AnalystTypeChosenState) Reply(ctx *DialogContext) {
+func (state AnalystTypeChosenState) reply(ctx *DialogContext) {
 	analystType := ctx.InputMessage.Text
 	log.Println("Analyst type: " + analystType)
 
@@ -162,7 +111,7 @@ func (state AnalystTypeChosenState) Reply(ctx *DialogContext) {
 
 type DeveloperTypeChosenState struct{}
 
-func (state DeveloperTypeChosenState) Reply(ctx *DialogContext) {
+func (state DeveloperTypeChosenState) reply(ctx *DialogContext) {
 	devType := ctx.InputMessage.Text
 	log.Println("Developer type: " + devType)
 
@@ -187,7 +136,7 @@ func (state DeveloperTypeChosenState) Reply(ctx *DialogContext) {
 
 type TesterTypeChosenState struct{}
 
-func (state TesterTypeChosenState) Reply(ctx *DialogContext) {
+func (state TesterTypeChosenState) reply(ctx *DialogContext) {
 	testerType := ctx.InputMessage.Text
 	log.Println("Tester type: " + testerType)
 
@@ -199,7 +148,7 @@ func (state TesterTypeChosenState) Reply(ctx *DialogContext) {
 
 type SpecialistCountSelectedState struct{}
 
-func (state SpecialistCountSelectedState) Reply(ctx *DialogContext) {
+func (state SpecialistCountSelectedState) reply(ctx *DialogContext) {
 	count := ctx.InputMessage.Text
 	log.Println("Selected specialist count: " + count)
 
@@ -211,13 +160,13 @@ func (state SpecialistCountSelectedState) Reply(ctx *DialogContext) {
 
 type TeamFormedState struct{}
 
-func (state TeamFormedState) Reply(ctx *DialogContext) {
+func (state TeamFormedState) reply(ctx *DialogContext) {
 	log.Println("Team has formed successfully")
 }
 
 type BackDeveloperChosenState struct{}
 
-func (state BackDeveloperChosenState) Reply(ctx *DialogContext) {
+func (state BackDeveloperChosenState) reply(ctx *DialogContext) {
 	backDevType := ctx.InputMessage.Text
 	log.Println("Chosen back-end developer: " + backDevType)
 
@@ -229,7 +178,7 @@ func (state BackDeveloperChosenState) Reply(ctx *DialogContext) {
 
 type FrontDeveloperChosenState struct{}
 
-func (state FrontDeveloperChosenState) Reply(ctx *DialogContext) {
+func (state FrontDeveloperChosenState) reply(ctx *DialogContext) {
 	frontDevType := ctx.InputMessage.Text
 	log.Println("Chosen back-end developer: " + frontDevType)
 
@@ -241,7 +190,7 @@ func (state FrontDeveloperChosenState) Reply(ctx *DialogContext) {
 
 type MobileDeveloperChosenState struct{}
 
-func (state MobileDeveloperChosenState) Reply(ctx *DialogContext) {
+func (state MobileDeveloperChosenState) reply(ctx *DialogContext) {
 	mobileDevType := ctx.InputMessage.Text
 	log.Println("Chosen back-end developer: " + mobileDevType)
 
@@ -253,7 +202,7 @@ func (state MobileDeveloperChosenState) Reply(ctx *DialogContext) {
 
 type AddingDreamerStartedState struct{}
 
-func (state AddingDreamerStartedState) Reply(ctx *DialogContext) {
+func (state AddingDreamerStartedState) reply(ctx *DialogContext) {
 	dreamerName := ctx.InputMessage.Text
 	log.Println("New member name: " + dreamerName)
 
@@ -264,29 +213,33 @@ func (state AddingDreamerStartedState) Reply(ctx *DialogContext) {
 
 type AddedDreamerLinkState struct{}
 
-func (state AddedDreamerLinkState) Reply(ctx *DialogContext) {
+func (state AddedDreamerLinkState) reply(ctx *DialogContext) {
 	dreamerLink := ctx.InputMessage.Text
 	log.Println("New member link: " + dreamerLink)
 
 	api.NewVkRequest().Messages().Send(group).UserId(ctx.InputMessage.AuthorId).Message(
-		"Выбери, пожалуйста, специализацию нового участника").Keyboard(
+		"Почта:").Execute()
+	setDialogState(ctx.InputMessage.AuthorId, AddedDreamerMailState{})
+}
+
+type AddedDreamerMailState struct{}
+
+func (state AddedDreamerMailState) reply(ctx *DialogContext) {
+	dreamerMail := ctx.InputMessage.Text
+	log.Println("New member mail: " + dreamerMail)
+
+	api.NewVkRequest().Messages().Send(group).UserId(ctx.InputMessage.AuthorId).Message(
+		"Выбери, пожалуйста, его специализацию").Keyboard(
 		"./keyboards/dreamers_type.json").Execute()
 	setDialogState(ctx.InputMessage.AuthorId, NewDreamerSpecializationSelectedState{})
 }
 
 // TODO спросить у hr о возможности добавления почты сотрудника
-
 type NewDreamerSpecializationSelectedState struct{}
 
-func (state NewDreamerSpecializationSelectedState) Reply(ctx *DialogContext) {
-
-}
-
-type DialogContext struct {
-	InputMessage *domain.Message
-	CurrentState DialogState
-}
-
-func (ctx *DialogContext) Reply() {
-	ctx.CurrentState.Reply(ctx)
+func (state NewDreamerSpecializationSelectedState) reply(ctx *DialogContext) {
+	api.NewVkRequest().Messages().Send(group).UserId(ctx.InputMessage.AuthorId).Message(
+		"Выбери, пожалуйста, специалистов, нужных тебе для реализации идеи").Keyboard(
+		"./keyboards/dreamers_type.json").Execute()
+	setDialogState(ctx.InputMessage.AuthorId, IdeaDescribedState{})
 }
