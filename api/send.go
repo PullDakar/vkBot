@@ -2,18 +2,19 @@ package api
 
 import (
 	"encoding/binary"
+	"encoding/json"
 	"github.com/spaolacci/murmur3"
 	"log"
 	"net/http"
 	"net/url"
 	"strconv"
 	"time"
-	"vkBot/keyboards"
+	"vkBot/keyboard"
 )
 
 type MessageSendQuery interface {
 	UserId(string) *MessageSendQueryBuilder
-	Keyboard(string) *MessageSendQueryBuilder
+	KeyboardByPath(string) *MessageSendQueryBuilder
 	Message(string) *MessageSendQueryBuilder
 }
 
@@ -46,8 +47,18 @@ func randomId(userId string) uint64 {
 	return h.Sum64()
 }
 
-func (queryBuilder *MessageSendQueryBuilder) Keyboard(pathToJson string) *MessageSendQueryBuilder {
-	queryBuilder.Vk.Params["keyboard"] = url.QueryEscape(keyboards.ParseJsonFileToString(pathToJson))
+func (queryBuilder *MessageSendQueryBuilder) KeyboardByPath(pathToJson string) *MessageSendQueryBuilder {
+	queryBuilder.Vk.Params["keyboard"] = url.QueryEscape(keyboard.ParseJsonFileToString(pathToJson))
+	return queryBuilder
+}
+
+func (queryBuilder *MessageSendQueryBuilder) Keyboard(k keyboard.Keyboard) *MessageSendQueryBuilder {
+	b, err := json.Marshal(k)
+	if err != nil {
+		log.Panic("Error while marshaling keyboard to json. Keyboard: "+string(b)+". Error: ", err)
+	}
+
+	queryBuilder.Vk.Params["keyboard"] = url.QueryEscape(string(b))
 	return queryBuilder
 }
 

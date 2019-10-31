@@ -33,8 +33,8 @@ func (state DialogNotStartedState) reply(ctx *DialogContext) {
 		api.NewVkRequest().Messages().Send(group).UserId(ctx.InputMessage.AuthorId).Message(
 			"Привет! Данный бот поможет тебе найти нужных специалистов для реализации твоей бизнес идеи! " +
 				"В случае, если идея будет доработана до минимально жизнеспособного продукта (MVP), у тебя появится " +
-				"возможность получить свои первые инвестиции на развитие проекта! Удачи!").Keyboard(
-			"./keyboards/init.json").Execute()
+				"возможность получить свои первые инвестиции на развитие проекта! Удачи!").KeyboardByPath(
+			"./keyboard/init.json").Execute()
 		setDialogState(ctx.InputMessage.AuthorId, DialogStartedState{})
 	}
 }
@@ -61,8 +61,8 @@ func (state IdeaBranchStartedState) reply(ctx *DialogContext) {
 	log.Println("Suggested idea: " + idea)
 
 	api.NewVkRequest().Messages().Send(group).UserId(ctx.InputMessage.AuthorId).Message(
-		"Выбери, пожалуйста, специалистов, нужных тебе для реализации идеи").Keyboard(
-		"./keyboards/dreamers_type.json").Execute()
+		"Выбери, пожалуйста, специалистов, нужных тебе для реализации идеи").KeyboardByPath(
+		"./keyboard/dreamers_type.json").Execute()
 	setDialogState(ctx.InputMessage.AuthorId, IdeaDescribedState{})
 }
 
@@ -72,23 +72,23 @@ func (state IdeaDescribedState) reply(ctx *DialogContext) {
 	switch ctx.InputMessage.Text {
 	case "Аналитик":
 		api.NewVkRequest().Messages().Send(group).UserId(ctx.InputMessage.AuthorId).Message(
-			"Выбери, пожалуйста, тип аналитика").Keyboard(
-			"./keyboards/analysis/dreamers_an_specialization.json").Execute()
+			"Выбери, пожалуйста, тип аналитика").KeyboardByPath(
+			"./keyboard/analysis/dreamers_an_specialization.json").Execute()
 		setDialogState(ctx.InputMessage.AuthorId, AnalystTypeChosenState{})
 	case "Разработчик":
 		api.NewVkRequest().Messages().Send(group).UserId(ctx.InputMessage.AuthorId).Message(
-			"Выбери, пожалуйста, тип разработчика").Keyboard(
-			"./keyboards/dev/dreamers_subtype_dev.json").Execute()
+			"Выбери, пожалуйста, тип разработчика").KeyboardByPath(
+			"./keyboard/dev/dreamers_subtype_dev.json").Execute()
 		setDialogState(ctx.InputMessage.AuthorId, DeveloperTypeChosenState{})
 	case "Тестировщик":
 		api.NewVkRequest().Messages().Send(group).UserId(ctx.InputMessage.AuthorId).Message(
-			"Выбери, пожалуйста, тип тестировщика").Keyboard(
-			"./keyboards/tester/dreamers_test_specialization.json").Execute()
+			"Выбери, пожалуйста, тип тестировщика").KeyboardByPath(
+			"./keyboard/tester/dreamers_test_specialization.json").Execute()
 		setDialogState(ctx.InputMessage.AuthorId, TesterTypeChosenState{})
 	case "Менеджер проектов":
 		api.NewVkRequest().Messages().Send(group).UserId(ctx.InputMessage.AuthorId).Message(
-			"Выбери, пожалуйста, количество менеджеров").Keyboard(
-			"./keyboards/dreamers_count.json").Execute()
+			"Выбери, пожалуйста, количество менеджеров").KeyboardByPath(
+			"./keyboard/dreamers_count.json").Execute()
 		setDialogState(ctx.InputMessage.AuthorId, SpecialistCountSelectedState{})
 	case "Сформировать команду":
 		api.NewVkRequest().Messages().Send(group).UserId(ctx.InputMessage.AuthorId).Message(
@@ -104,8 +104,8 @@ func (state AnalystTypeChosenState) reply(ctx *DialogContext) {
 	log.Println("Analyst type: " + analystType)
 
 	api.NewVkRequest().Messages().Send(group).UserId(ctx.InputMessage.AuthorId).Message(
-		"Выбери, пожалуйста, количество аналитиков").Keyboard(
-		"./keyboards/dreamers_count.json").Execute()
+		"Выбери, пожалуйста, количество аналитиков").KeyboardByPath(
+		"./keyboard/dreamers_count.json").Execute()
 	setDialogState(ctx.InputMessage.AuthorId, SpecialistCountSelectedState{})
 }
 
@@ -118,18 +118,18 @@ func (state DeveloperTypeChosenState) reply(ctx *DialogContext) {
 	switch ctx.InputMessage.Text {
 	case "Бэк":
 		api.NewVkRequest().Messages().Send(group).UserId(ctx.InputMessage.AuthorId).Message(
-			"Выбери, пожалуйста, тип разработчика").Keyboard(
-			"./keyboards/dev/dreamers_back_specialization.json").Execute()
+			"Выбери, пожалуйста, тип разработчика").KeyboardByPath(
+			"./keyboard/dev/dreamers_back_specialization.json").Execute()
 		setDialogState(ctx.InputMessage.AuthorId, BackDeveloperChosenState{})
 	case "Фронт":
 		api.NewVkRequest().Messages().Send(group).UserId(ctx.InputMessage.AuthorId).Message(
-			"Выбери, пожалуйста, тип разработчика").Keyboard(
-			"./keyboards/dev/dreamers_front_specialization.json").Execute()
+			"Выбери, пожалуйста, тип разработчика").KeyboardByPath(
+			"./keyboard/dev/dreamers_front_specialization.json").Execute()
 		setDialogState(ctx.InputMessage.AuthorId, FrontDeveloperChosenState{})
 	case "Мобильный":
 		api.NewVkRequest().Messages().Send(group).UserId(ctx.InputMessage.AuthorId).Message(
-			"Выбери, пожалуйста, тип разработчика").Keyboard(
-			"./keyboards/dev/dreamers_mobile_specialization.json").Execute()
+			"Выбери, пожалуйста, тип разработчика").KeyboardByPath(
+			"./keyboard/dev/dreamers_mobile_specialization.json").Execute()
 		setDialogState(ctx.InputMessage.AuthorId, MobileDeveloperChosenState{})
 	}
 }
@@ -141,8 +141,8 @@ func (state TesterTypeChosenState) reply(ctx *DialogContext) {
 	log.Println("Tester type: " + testerType)
 
 	api.NewVkRequest().Messages().Send(group).UserId(ctx.InputMessage.AuthorId).Message(
-		"Выбери, пожалуйста, количество тестировщиков").Keyboard(
-		"./keyboards/dreamers_count.json").Execute()
+		"Выбери, пожалуйста, количество тестировщиков").KeyboardByPath(
+		"./keyboard/dreamers_count.json").Execute()
 	setDialogState(ctx.InputMessage.AuthorId, SpecialistCountSelectedState{})
 }
 
@@ -153,8 +153,8 @@ func (state SpecialistCountSelectedState) reply(ctx *DialogContext) {
 	log.Println("Selected specialist count: " + count)
 
 	api.NewVkRequest().Messages().Send(group).UserId(ctx.InputMessage.AuthorId).Message(
-		"Выбери, пожалуйста, специалистов, нужных тебе для реализации идеи").Keyboard(
-		"./keyboards/dreamers_type.json").Execute()
+		"Выбери, пожалуйста, специалистов, нужных тебе для реализации идеи").KeyboardByPath(
+		"./keyboard/dreamers_type.json").Execute()
 	setDialogState(ctx.InputMessage.AuthorId, IdeaDescribedState{})
 }
 
@@ -171,8 +171,8 @@ func (state BackDeveloperChosenState) reply(ctx *DialogContext) {
 	log.Println("Chosen back-end developer: " + backDevType)
 
 	api.NewVkRequest().Messages().Send(group).UserId(ctx.InputMessage.AuthorId).Message(
-		"Выбери, пожалуйста, количество " + backDevType + " разработчиков").Keyboard(
-		"./keyboards/dreamers_count.json").Execute()
+		"Выбери, пожалуйста, количество " + backDevType + " разработчиков").KeyboardByPath(
+		"./keyboard/dreamers_count.json").Execute()
 	setDialogState(ctx.InputMessage.AuthorId, SpecialistCountSelectedState{})
 }
 
@@ -183,8 +183,8 @@ func (state FrontDeveloperChosenState) reply(ctx *DialogContext) {
 	log.Println("Chosen back-end developer: " + frontDevType)
 
 	api.NewVkRequest().Messages().Send(group).UserId(ctx.InputMessage.AuthorId).Message(
-		"Выбери, пожалуйста, количество " + frontDevType + " разработчиков").Keyboard(
-		"./keyboards/dreamers_count.json").Execute()
+		"Выбери, пожалуйста, количество " + frontDevType + " разработчиков").KeyboardByPath(
+		"./keyboard/dreamers_count.json").Execute()
 	setDialogState(ctx.InputMessage.AuthorId, SpecialistCountSelectedState{})
 }
 
@@ -195,8 +195,8 @@ func (state MobileDeveloperChosenState) reply(ctx *DialogContext) {
 	log.Println("Chosen back-end developer: " + mobileDevType)
 
 	api.NewVkRequest().Messages().Send(group).UserId(ctx.InputMessage.AuthorId).Message(
-		"Выбери, пожалуйста, количество " + mobileDevType + " разработчиков").Keyboard(
-		"./keyboards/dreamers_count.json").Execute()
+		"Выбери, пожалуйста, количество " + mobileDevType + " разработчиков").KeyboardByPath(
+		"./keyboard/dreamers_count.json").Execute()
 	setDialogState(ctx.InputMessage.AuthorId, SpecialistCountSelectedState{})
 }
 
@@ -229,8 +229,8 @@ func (state AddedDreamerMailState) reply(ctx *DialogContext) {
 	log.Println("New member mail: " + dreamerMail)
 
 	api.NewVkRequest().Messages().Send(group).UserId(ctx.InputMessage.AuthorId).Message(
-		"Выбери, пожалуйста, его специализацию").Keyboard(
-		"./keyboards/dreamers_type.json").Execute()
+		"Выбери, пожалуйста, его специализацию").KeyboardByPath(
+		"./keyboard/dreamers_type.json").Execute()
 	setDialogState(ctx.InputMessage.AuthorId, NewDreamerSpecializationSelectedState{})
 }
 
@@ -239,7 +239,7 @@ type NewDreamerSpecializationSelectedState struct{}
 
 func (state NewDreamerSpecializationSelectedState) reply(ctx *DialogContext) {
 	api.NewVkRequest().Messages().Send(group).UserId(ctx.InputMessage.AuthorId).Message(
-		"Выбери, пожалуйста, специалистов, нужных тебе для реализации идеи").Keyboard(
-		"./keyboards/dreamers_type.json").Execute()
+		"Выбери, пожалуйста, специалистов, нужных тебе для реализации идеи").KeyboardByPath(
+		"./keyboard/dreamers_type.json").Execute()
 	setDialogState(ctx.InputMessage.AuthorId, IdeaDescribedState{})
 }

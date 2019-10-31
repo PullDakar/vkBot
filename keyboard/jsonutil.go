@@ -1,4 +1,4 @@
-package keyboards
+package keyboard
 
 import (
 	"io/ioutil"
